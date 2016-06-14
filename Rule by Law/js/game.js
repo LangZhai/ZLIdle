@@ -265,6 +265,7 @@ $(function () {
     dialogOptionPlague.buttons.push({
         text: '抗击瘟疫！',
         callback: function () {
+            //TODO:扣除费用
             isPlague = false;
             $footerText.text('');
             closeDialog();
