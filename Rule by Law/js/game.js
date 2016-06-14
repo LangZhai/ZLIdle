@@ -84,7 +84,9 @@ var
                     });
                 }
                 timeout.push(setTimeout(function () {
-                    badPeople += 1;
+                    freelessPeople = minus(freelessPeople, function () {
+                        badPeople++;
+                    });
                 }, 1000 / setting.speed * day));
             }
         }
@@ -116,13 +118,12 @@ var
         if (isOver) {
             return;
         }
+        clearInterval(interval);
         if (isResume) {
             if (now - time <= 10000) {
                 time = new Date().getTime();
             }
             interval = setInterval(main, 1000 / setting.speed);
-        } else {
-            clearInterval(interval);
         }
     },
 // 程序初始化
@@ -248,7 +249,7 @@ $(function () {
             size: {
                 width: 300
             },
-            content: '<h3>游戏玩法</h3><p>　　游戏起始人口为10000人，游戏总天数为2000天，你需要收集随机产生的金钱来修改游戏参数，使人口数量维持在10000左右，在游戏结束时，人口数量误差在5%以内算胜利！</p><p>　　游戏中有一定概率遭遇“瘟疫横行”，建议预留研制药物所需资金！</p><h3>关于游戏</h3><p>版本：V1.0.0</p><p>作者：智能小菜菜</p><p>邮箱：<a href=\'mailto:zl2012xyz@hotmail.com\'>zl2012xyz@hotmail.com</a></p>',
+            content: '<h3>游戏玩法</h3><p>　　游戏起始人口为10000人，游戏总天数为2000天，你需要使用随机产生的金钱来修改游戏参数，使人口数量维持在10000左右，在游戏结束时，人口数量误差在5%以内算胜利！</p><p>　　游戏中有一定概率遭遇“瘟疫横行”，建议预留研制药物所需资金！</p><h3>关于游戏</h3><p>版本：V1.0.0</p><p>作者：智能小菜菜</p><p>邮箱：<a href=\'mailto:zl2012xyz@hotmail.com\'>zl2012xyz@hotmail.com</a></p>',
             closeBack: function () {
                 pauseOrResume(true);
             }
@@ -274,14 +275,20 @@ $(function () {
     main = function () {
         var newRate, deadRate;
         now = new Date().getTime();
-        if (now - time > 5000) {
-            clearInterval(interval);
+        if (now - time > 3000) {
+            pauseOrResume();
             $footerText.text('程序过于卡顿，游戏结束！');
             over();
             return;
         }
         if (now - time > 1000 / setting.speed * 2) {
             setting.speed /= 2;
+            pauseOrResume(true);
+            clearTimeout($footerText.timeout);
+            $footerText.addClass('slow');
+            $footerText.timeout = setTimeout(function () {
+                $footerText.removeClass('slow');
+            }, 1000);
         }
         time = now;
 

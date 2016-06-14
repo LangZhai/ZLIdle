@@ -157,6 +157,17 @@ body {
         justify-content: flex-end;
         p {
             text-align: center;
+            position: relative;
+            &.slow {
+                &:after {
+                    content: '程序卡顿，已重新设置速度！';
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                }
+            }
         }
         span {
             display: block;
