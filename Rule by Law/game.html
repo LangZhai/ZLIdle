@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="Rule by Law —— 依法治国是一款由LangZhai（智能小菜菜）开发的放置类游戏。">
+        <meta name="keywords" content="Rule by Law,依法治国,放置类游戏,LangZhai,智能小菜菜,SmartCai">
+        <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+        <link rel="shortcut icon" type="image/x-icon" href="http://langzhai.github.io/favicon.ico">
+        <title>Rule by Law —— 依法治国</title>
+        <link rel="stylesheet" href="http://langzhai.github.io/ZLDialog/dist/skin/default/zldialog.default.min.css">
+        <link rel="stylesheet" href="css/game.min.css">
+    </head>
+    <body>
+        <header>
+            <h1>Rule by Law —— 依法治国</h1>
+            <h2>
+                <div class="hidden">
+                    天数 <span>0</span>
+                    <p>人口 <span>10000</span></p>
+                </div>
+                <div>开始</div>
+            </h2>
+            <nav>
+                <span>金钱<span>0</span></span><span>设置</span><span>帮助</span>
+            </nav>
+        </header>
+        <section>
+            <figure>
+                <figcaption>普通人</figcaption>
+                <span>0</span>
+                <span class="num"></span>
+                <span class="num"></span>
+            </figure>
+            <figure>
+                <figcaption>刑满人</figcaption>
+                <span>0</span>
+                <span class="num"></span>
+                <span class="num"></span>
+            </figure>
+            <figure>
+                <figcaption>服刑人</figcaption>
+                <span>0</span>
+                <span class="num"></span>
+                <span class="num"></span>
+            </figure>
+            <figure>
+                <figcaption>已亡人</figcaption>
+                <span>0</span>
+                <span class="num"></span>
+                <span class="num"></span>
+            </figure>
+        </section>
+        <footer>
+            <p></p>
+            <span>By 智能小菜菜</span>
+        </footer>
+        <div id="setting" class="hidden">
+            <form action="javascript:">
+                <input type="hidden" name="cost" value="0">
+                <p>本次修改需花费金钱<span id="cost">0</span></p>
+                <dl>
+                    <dt>游戏速度</dt>
+                    <dd><input type="range" min="1" step="1" max="100" name="speed"></dd>
+                    <dt>犯罪率</dt>
+                    <dd><input type="range" min="0" step="0.1" max="1" name="crimeRate"></dd>
+                    <dt>再犯罪率</dt>
+                    <dd><input type="range" min="0" step="0.1" max="2" name="crimeAgainRate"></dd>
+                </dl>
+            </form>
+        </div>
+        <script src="http://langzhai.github.io/lib/jquery-2.x.min.js"></script>
+        <script src="http://langzhai.github.io/ZLTools/dist/jquery.zltools.min.js"></script>
+        <script src="http://langzhai.github.io/ZLDialog/dist/js/jquery.zldialog.min.js"></script>
+        <script src="js/game.min.js"></script>
+    </body>
+</html>
