@@ -241,7 +241,7 @@ $(function () {
             }
             money -= formData.cost;
             if (formData.cost > 0) {
-                formData.cost = Math.ceil(formData.cost * 2);
+                formData.cost = Math.ceil(formData.cost * 1.2);
             } else {
                 formData.cost = 1;
             }
