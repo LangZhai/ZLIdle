@@ -46,13 +46,11 @@ var
             day = 0;
             isDead = false;
             rateDeal(rate, function () {
-                //TODO:这里的计算需要重新考虑
-                crime.forEach(function (item) {
-                    if (isDead) {
-                        return;
-                    }
-                    rateDeal(item.rate, function () {
-                        if (item.day === 0) {
+                var random = Math.random() * 100;
+                crime.reduce(function (a, b) {
+                    var sum = a.rate + b.rate;
+                    if (random >= a.rate && random < sum) {
+                        if (b.day === 0) {
                             day = 0;
                             isDead = true;
                             if (isAgain) {
@@ -65,13 +63,15 @@ var
                                 });
                             }
                         } else {
-                            day += item.day;
+                            day = b.day;
                         }
-                    });
+                    }
+                    return {
+                        rate: sum
+                    };
+                }, {
+                    rate: 0
                 });
-                if (!day && !isDead) {
-                    day = crime[0].day;
-                }
             });
             if (day) {
                 if (isAgain) {
@@ -157,47 +157,58 @@ var
             // 修改花费
             cost: 0
         };
-        crime = [{
-            name: '盗窃',
-            rate: 25,
-            day: 10
-        }, {
-            name: '嫖娼',
-            rate: 25,
-            day: 10
-        }, {
-            name: '抢劫',
-            rate: 12,
-            day: 30
-        }, {
-            name: '行贿',
-            rate: 12,
-            day: 30
-        }, {
-            name: '贪污',
-            rate: 8,
-            day: 100
-        }, {
-            name: '伤人',
-            rate: 8,
-            day: 150
-        }, {
-            name: '卖淫',
-            rate: 4,
-            day: 500
-        }, {
-            name: '强奸',
-            rate: 3,
-            day: 700
-        }, {
-            name: '贩毒',
-            rate: 2,
-            day: 1000
-        }, {
-            name: '杀人',
-            rate: 1,
-            day: 0
-        }];
+        crime = [
+            {
+                name: '盗窃',
+                rate: 25,
+                day: 10
+            },
+            {
+                name: '嫖娼',
+                rate: 25,
+                day: 10
+            },
+            {
+                name: '抢劫',
+                rate: 12,
+                day: 30
+            },
+            {
+                name: '行贿',
+                rate: 12,
+                day: 30
+            },
+            {
+                name: '贪污',
+                rate: 8,
+                day: 100
+            },
+            {
+                name: '伤人',
+                rate: 8,
+                day: 150
+            },
+            {
+                name: '卖淫',
+                rate: 4,
+                day: 500
+            },
+            {
+                name: '强奸',
+                rate: 3,
+                day: 700
+            },
+            {
+                name: '贩毒',
+                rate: 2,
+                day: 1000
+            },
+            {
+                name: '杀人',
+                rate: 1,
+                day: 0
+            }
+        ];
     };
 
 $(function () {
@@ -218,38 +229,68 @@ $(function () {
         $setting = $('#setting'), $form = $setting.children(), $cost = $form.find('#cost'), $input = $form.find(':input'),
     // 设置框关闭
         closeDialog,
+    // 应用设置
+        apply = function (callback) {
+            var formData = $('.ZLDialog:first form:first').serializeObject();
+            if (money < formData.cost) {
+                $.dialog.message({
+                    content: '金钱不足！',
+                    lock: true
+                });
+                return;
+            }
+            money -= formData.cost;
+            if (formData.cost > 0) {
+                formData.cost = Math.ceil(formData.cost * 2);
+            } else {
+                formData.cost = 1;
+            }
+            $.extend(setting, formData);
+            if ($.type(callback) === 'function') {
+                callback();
+            }
+            closeDialog();
+        },
     // 设置框参数
         dialogOption = {
             title: '依法治国-设置',
-            size: {width: 350},
-            buttons: [{
-                text: '确定',
-                callback: function () {
-                    var formData = $('.ZLDialog:first form:first').serializeObject();
-                    if (money < formData.cost) {
-                        return;
-                    }
-                    money -= formData.cost;
-                    if (formData.cost > 0) {
-                        formData.cost = Math.ceil(formData.cost * 1.2);
-                    } else {
-                        formData.cost = 1;
-                    }
-                    $.extend(setting, formData);
-                    closeDialog();
+            size: {
+                width: 350
+            },
+            buttons: [
+                {
+                    text: '确定',
+                    callback: apply
+                },
+                {
+                    text: '取消'
                 }
-            }, {text: '取消'}],
+            ],
             closeBack: function () {
                 pauseOrResume(true);
             }
-        }, dialogOptionPlague = $.extend(true, {}, dialogOption),
+        },
+    // 设置框参数（瘟疫）
+        dialogOptionPlague = $.extend({}, dialogOption, {
+            buttons: dialogOption.buttons.concat([
+                {
+                    text: '抗击瘟疫！',
+                    callback: function () {
+                        apply(function () {
+                            isPlague = false;
+                            $footerText.text('');
+                        });
+                    }
+                }
+            ])
+        }),
     // 帮助框参数
         dialogOptionHelp = {
             title: '依法治国-帮助',
             size: {
                 width: 300
             },
-            content: '<h3>游戏玩法</h3><p>　　游戏起始人口为10000人，游戏总天数为2000天，你需要使用随机产生的金钱来修改游戏参数，使人口数量维持在10000左右，在游戏结束时，人口数量误差在5%以内算胜利！</p><p>　　游戏中有一定概率遭遇“瘟疫横行”，建议预留研制药物所需资金！</p><h3>关于游戏</h3><p>版本：V1.0.0 Alpha</p><p>作者：智能小菜菜</p><p>邮箱：<a href=\'mailto:zl2012xyz@hotmail.com\'>zl2012xyz@hotmail.com</a></p>',
+            content: '<h3>游戏玩法</h3><p>　　游戏起始人口为10000人，游戏总天数为2000天，你需要使用随机产生的金钱来修改游戏参数，使人口数量维持在10000左右，在游戏结束时，人口数量误差在5%以内算胜利！</p><p>　　游戏中有一定概率遭遇“瘟疫横行”，建议预留研制药物所需资金！</p><h3>关于游戏</h3><p>版本：V1.0.4 Alpha</p><p>作者：智能小菜菜</p><p>邮箱：<a href=\'mailto:zl2012xyz@hotmail.com\'>zl2012xyz@hotmail.com</a></p>',
             closeBack: function () {
                 pauseOrResume(true);
             }
@@ -260,17 +301,6 @@ $(function () {
             $start.removeClass('hidden');
             $day.addClass('hidden');
         };
-
-    // 设置框参数（瘟疫）
-    dialogOptionPlague.buttons.push({
-        text: '抗击瘟疫！',
-        callback: function () {
-            //TODO:扣除费用
-            isPlague = false;
-            $footerText.text('');
-            closeDialog();
-        }
-    });
 
     // 主程序定义
     main = function () {
