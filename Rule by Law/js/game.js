@@ -4,7 +4,7 @@ var
 // 主程序定时器
     interval,
 // 时间变量
-    time, now,
+    start, end,
 // 天数
     dayNum,
 // 人口
@@ -120,9 +120,7 @@ var
         }
         clearInterval(interval);
         if (isResume) {
-            if (now - time <= 10000) {
-                time = new Date().getTime();
-            }
+            start = new Date().getTime();
             interval = setInterval(main, 1000 / setting.speed);
         }
     },
@@ -230,22 +228,23 @@ $(function () {
     // 设置框关闭
         closeDialog,
     // 应用设置
-        apply = function (callback) {
-            var formData = $('.ZLDialog:first form:first').serializeObject();
-            if (money < formData.cost) {
+        apply = function (callback, noSetting) {
+            if (money < setting.cost) {
                 $.dialog.message({
                     content: '金钱不足！',
                     lock: true
                 });
                 return;
             }
-            money -= formData.cost;
-            if (formData.cost > 0) {
-                formData.cost = Math.ceil(formData.cost * 1.2);
+            money -= setting.cost;
+            if (setting.cost > 0) {
+                setting.cost = Math.ceil(setting.cost * 1.2);
             } else {
-                formData.cost = 1;
+                setting.cost = 1;
             }
-            $.extend(setting, formData);
+            if (!noSetting) {
+                $.extend(setting, $('.ZLDialog:first form:first').serializeObject());
+            }
             if ($.type(callback) === 'function') {
                 callback();
             }
@@ -279,7 +278,7 @@ $(function () {
                         apply(function () {
                             isPlague = false;
                             $footerText.text('');
-                        });
+                        }, true);
                     }
                 }
             ])
@@ -290,13 +289,14 @@ $(function () {
             size: {
                 width: 300
             },
-            content: '<h3>游戏玩法</h3><p>　　游戏起始人口为10000人，游戏总天数为2000天，你需要使用随机产生的金钱来修改游戏参数，使人口数量维持在10000左右，在游戏结束时，人口数量误差在5%以内算胜利！</p><p>　　游戏中有一定概率遭遇“瘟疫横行”，建议预留研制药物所需资金！</p><h3>关于游戏</h3><p>版本：V1.0.4 Alpha</p><p>作者：智能小菜菜</p><p>邮箱：<a href=\'mailto:zl2012xyz@hotmail.com\'>zl2012xyz@hotmail.com</a></p>',
+            content: '<h3>游戏玩法</h3><p>　　游戏起始人口为10000人，游戏总天数为2000天，你需要使用随机产生的金钱来修改游戏参数，使人口数量维持在10000左右，在游戏结束时，人口数量误差在5%以内算胜利！</p><p>　　游戏中有一定概率遭遇“瘟疫横行”，建议预留研制药物所需资金！</p><h3>关于游戏</h3><p>版本：V1.0.8 Alpha</p><p>作者：智能小菜菜</p><p>邮箱：<a href=\'mailto:zl2012xyz@hotmail.com\'>zl2012xyz@hotmail.com</a></p>',
             closeBack: function () {
                 pauseOrResume(true);
             }
         },
     // 结束游戏
         over = function () {
+            pauseOrResume();
             init();
             $start.removeClass('hidden');
             $day.addClass('hidden');
@@ -305,15 +305,14 @@ $(function () {
     // 主程序定义
     main = function () {
         var newRate, deadRate;
-        now = new Date().getTime();
-        if (now - time > 3000) {
-            pauseOrResume();
+        end = new Date().getTime();
+        if (end - start > 3000 || setting.speed < 1) {
             $footerText.text('程序过于卡顿，游戏结束！');
             over();
             return;
         }
-        if (now - time > 1000 / setting.speed * 2) {
-            setting.speed /= 2;
+        if (end - start > 1000 / setting.speed * 2) {
+            setting.speed -= 4.95;
             pauseOrResume(true);
             clearTimeout($footerText.timeout);
             $footerText.addClass('slow');
@@ -321,7 +320,7 @@ $(function () {
                 $footerText.removeClass('slow');
             }, 1000);
         }
-        time = now;
+        start = end;
 
         // 金钱计算
         for (i = 0; i < 3; i++) {
@@ -382,12 +381,10 @@ $(function () {
         }
 
         if (normalPeople + badPeople + freelessPeople === 0) {
-            clearInterval(interval);
             $footerText.text('人类在第' + dayNum + '天灭亡，游戏结束！');
             over();
         }
         if (dayNum === 2000) {
-            clearInterval(interval);
             if (Math.abs(normalPeople + badPeople + freelessPeople - 10000) < 10000 * 0.05) {
                 $footerText.text('你获得了胜利！');
                 over();
