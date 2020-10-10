@@ -1,29 +1,29 @@
 var
-// 主程序
+    // 主程序
     main,
-// 主程序定时器
+    // 主程序定时器
     interval,
-// 时间变量
+    // 时间变量
     start, end,
-// 天数
+    // 天数
     dayNum,
-// 人口
+    // 人口
     normalPeople, badPeople, freelessPeople, deadPeople, normalOld, badOld, freelessOld, deadOld,
-// 金钱相关
+    // 金钱相关
     money, moneyRate,
-// 是否已发生瘟疫
+    // 是否已发生瘟疫
     isPlague,
-// 是否已结束
+    // 是否已结束
     isOver,
-// 瘟疫爆发率
+    // 瘟疫爆发率
     plagueRate,
-// 囚犯释放队列
+    // 囚犯释放队列
     timeout,
-// 可设置游戏数据
+    // 可设置游戏数据
     setting,
-// 罪名
+    // 罪名
     crime,
-// 减法计算
+    // 减法计算
     minus = function (people, callback) {
         people--;
         if (people < 0) {
@@ -33,13 +33,13 @@ var
         }
         return people;
     },
-// 概率计算
+    // 概率计算
     rateDeal = function (rate, callback) {
         if (Math.random() * 100 <= rate) {
             callback();
         }
     },
-// 犯罪计算
+    // 犯罪计算
     crimeDeal = function (people, isAgain) {
         var i, day, isDead, rate = isAgain ? setting.crimeAgainRate : setting.crimeRate;
         for (i = 0; i < people; i++) {
@@ -91,7 +91,7 @@ var
             }
         }
     },
-// 出生/死亡计算
+    // 出生/死亡计算
     newDeal = function (people, rate) {
         var i, num = 0;
         for (i = 0; i < people; i++) {
@@ -101,7 +101,7 @@ var
         }
         return num;
     },
-// 显示增减人数
+    // 显示增减人数
     showNum = function (oldNum, newNum, $plus, $minus) {
         if (newNum > oldNum) {
             $plus.text('+' + (newNum - oldNum)).removeClass('plus').animate({}, 0, function () {
@@ -113,7 +113,7 @@ var
             });
         }
     },
-// 暂停或继续
+    // 暂停或继续
     pauseOrResume = function (isResume) {
         if (isOver) {
             return;
@@ -124,7 +124,7 @@ var
             interval = setInterval(main, 1000 / setting.speed);
         }
     },
-// 程序初始化
+    // 程序初始化
     init = function () {
         dayNum = 0;
         normalPeople = 10000;
@@ -211,23 +211,23 @@ var
 
 $(function () {
     var
-    // 循环变量
+        // 循环变量
         i,
-    // 死亡人数变量
+        // 死亡人数变量
         normalDead, badDead, freelessDead,
-    // 头部jQuery变量
+        // 头部jQuery变量
         $headerDivs = $('header h2 div'), $day = $headerDivs.eq(0), $start = $headerDivs.eq(1), $dayText = $day.children('span'), $peopleText = $day.find('p span'),
-    // 导航栏jQuery变量
+        // 导航栏jQuery变量
         $navBtns = $('header nav > span'), $money = $navBtns.eq(0).children(), $setBtn = $navBtns.eq(1), $helpBtn = $navBtns.eq(2),
-    // 中间jQuery变量
+        // 中间jQuery变量
         $sectionFigures = $('section figure'), $normal = $sectionFigures.eq(0).children('span:first'), $normalPlus = $normal.next(), $normalMinus = $normalPlus.next(), $bad = $sectionFigures.eq(1).children('span:first'), $badPlus = $bad.next(), $badMinus = $badPlus.next(), $freeless = $sectionFigures.eq(2).children('span:first'), $freelessPlus = $freeless.next(), $freelessMinus = $freelessPlus.next(), $dead = $sectionFigures.eq(3).children('span:first'), $deadPlus = $dead.next(), $deadMinus = $deadPlus.next(),
-    // 尾部jQuery变量
+        // 尾部jQuery变量
         $footerText = $('footer p:first'),
-    // 设置框jQuery变量
+        // 设置框jQuery变量
         $setting = $('#setting'), $form = $setting.children(), $cost = $form.find('#cost'), $input = $form.find(':input'),
-    // 设置框关闭
+        // 设置框关闭
         closeDialog,
-    // 应用设置
+        // 应用设置
         apply = function (callback, noSetting) {
             if (money < setting.cost) {
                 $.dialog.message({
@@ -243,14 +243,14 @@ $(function () {
                 setting.cost = 1;
             }
             if (!noSetting) {
-                $.extend(setting, $('.ZLDialog:first form:first').serializeObject());
+                Object.extend(setting, ZLTools($('.ZLDialog:first form:first')[0]).serializeObject());
             }
             if ($.type(callback) === 'function') {
                 callback();
             }
             closeDialog();
         },
-    // 设置框参数
+        // 设置框参数
         dialogOption = {
             title: '依法治国-设置',
             size: {
@@ -269,8 +269,8 @@ $(function () {
                 pauseOrResume(true);
             }
         },
-    // 设置框参数（瘟疫）
-        dialogOptionPlague = $.extend({}, dialogOption, {
+        // 设置框参数（瘟疫）
+        dialogOptionPlague = Object.extend({}, dialogOption, {
             buttons: dialogOption.buttons.concat([
                 {
                     text: '抗击瘟疫！',
@@ -283,7 +283,7 @@ $(function () {
                 }
             ])
         }),
-    // 帮助框参数
+        // 帮助框参数
         dialogOptionHelp = {
             title: '依法治国-帮助',
             size: {
@@ -294,7 +294,7 @@ $(function () {
                 pauseOrResume(true);
             }
         },
-    // 结束游戏
+        // 结束游戏
         over = function () {
             pauseOrResume();
             init();
