@@ -1,4 +1,4 @@
-# [ZLIdle](https://github.com/LangZhai/ZLIdle) [![GitHub](https://img.shields.io/github/license/langzhai/zlidle)](http://www.gnu.org/licenses/lgpl.html)
+# [ZLIdle](https://github.com/LangZhai/ZLIdle) [![GitHub](https://img.shields.io/github/license/LangZhai/ZLIdle)](https://github.com/LangZhai/ZLIdle/blob/master/LICENSE)
 
 ## 这是啥
 
